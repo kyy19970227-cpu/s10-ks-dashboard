@@ -86,7 +86,11 @@ tr.detail-tr td{background:#f8fafc;padding:10px 14px 14px 28px !important;text-a
 .mini-table tr:last-child td{border-bottom:none}
 .period-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .period-panel{border:1px solid var(--line);border-radius:10px;padding:14px 16px}
-.period-panel h4{font-size:13px;font-weight:700;margin-bottom:2px}
+.period-panel .pp-head{font-size:13px;font-weight:700;cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px}
+.period-panel .pp-head:hover{color:#0a8f5f}
+.period-panel.collapsed .pp-head .fold-chev{transform:rotate(-90deg)}
+.period-panel .pp-body{margin-top:8px}
+.period-panel.collapsed .pp-body{display:none}
 .period-panel .pmeta{font-size:11.5px;color:var(--sub);margin-bottom:8px}
 .bar-cell{position:relative;min-width:120px}
 .bar-cell .fill{position:absolute;left:0;top:50%;height:1.5em;transform:translateY(-50%);border-radius:4px;opacity:.28}
@@ -154,6 +158,7 @@ footer{font-size:12px;color:var(--sub);padding:8px 4px 24px;line-height:1.7}
 <div class="card" style="margin-bottom:var(--gap)">
   <h3>周度表现汇总</h3>
   <div class="hint">金额与占比均为 USD 口径 · 日均按该周完整天计算（剔除导出不完整天）· 三类型列 = Custom / KS 内部 / External 金额占比</div>
+  <div class="canvas-box short"><canvas id="weeklyChart"></canvas></div>
   <div style="overflow-x:auto"><table class="data no-sort">
     <thead><tr><th>周次</th><th>时间</th><th>订单数</th><th>金额 (USD)</th><th>日均订单</th><th>日均金额</th>
       <th><span style="color:#4C72B0">Custom</span></th><th><span style="color:#0bbf7f">KS 内部</span></th><th><span style="color:#DD8452">External</span></th><th>占总盘</th></tr></thead>
@@ -164,7 +169,7 @@ footer{font-size:12px;color:var(--sub);padding:8px 4px 24px;line-height:1.7}
 <div class="card" style="margin-bottom:var(--gap)">
   <h3>订单来源 · 分周期 Top 渠道</h3>
   <div class="hint">按 10/22-10/27 ｜ 10/28-11/2 ｜ 11/3-11/9 ｜ 11/10-11/16 四个周期统计（每周期 Top 8，金额为 USD）· 反映渠道动能随周期的迁移</div>
-  <div class="period-grid"><div class="period-panel"><h4>10/22-10/27 <span style="color:var(--sub);font-weight:400">· 首发期</span></h4><div class="pmeta">合计 <b style="color:var(--ink)">$449,850</b> · 317 单</div><table class="mini-table"><thead><tr><th>来源渠道</th><th>类型</th><th>单数</th><th>金额</th><th>占比</th></tr></thead><tbody><tr><td>VIP Deposit</td><td><span class="tag Custom">Custom</span></td><td>50</td><td><b>$74,835</b></td><td class="pct">16.6%</td></tr><tr><td>Email - Automated - Project Launched - Followers</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>42</td><td><b>$56,339</b></td><td class="pct">12.5%</td></tr><tr><td>Meta ads</td><td><span class="tag Custom">Custom</span></td><td>35</td><td><b>$49,365</b></td><td class="pct">11.0%</td></tr><tr><td>App - Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>33</td><td><b>$45,769</b></td><td class="pct">10.2%</td></tr><tr><td>Direct Traffic - No Referrer Information</td><td><span class="tag External">External</span></td><td>30</td><td><b>$43,636</b></td><td class="pct">9.7%</td></tr><tr><td>Kickstarter Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>16</td><td><b>$24,292</b></td><td class="pct">5.4%</td></tr><tr><td>Web</td><td><span class="tag Custom">Custom</span></td><td>13</td><td><b>$20,960</b></td><td class="pct">4.7%</td></tr><tr><td>Push</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>10</td><td><b>$14,071</b></td><td class="pct">3.1%</td></tr></tbody></table></div><div class="period-panel"><h4>10/28-11/2 <span style="color:var(--sub);font-weight:400">· 衰减期</span></h4><div class="pmeta">合计 <b style="color:var(--ink)">$81,706</b> · 57 单</div><table class="mini-table"><thead><tr><th>来源渠道</th><th>类型</th><th>单数</th><th>金额</th><th>占比</th></tr></thead><tbody><tr><td>Meta ads</td><td><span class="tag Custom">Custom</span></td><td>14</td><td><b>$20,762</b></td><td class="pct">25.4%</td></tr><tr><td>Web</td><td><span class="tag Custom">Custom</span></td><td>6</td><td><b>$8,566</b></td><td class="pct">10.5%</td></tr><tr><td>App - Recommended - Home</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$5,477</b></td><td class="pct">6.7%</td></tr><tr><td>Profile - Saved Projects</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$4,688</b></td><td class="pct">5.7%</td></tr><tr><td>Discovery Landing Page</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$4,047</b></td><td class="pct">5.0%</td></tr><tr><td>Kickstarter Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$3,634</b></td><td class="pct">4.4%</td></tr><tr><td>Kickstarter Discovery - No Referral Code</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$3,230</b></td><td class="pct">4.0%</td></tr><tr><td>App - Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$3,014</b></td><td class="pct">3.7%</td></tr></tbody></table></div><div class="period-panel"><h4>11/3-11/9 <span style="color:var(--sub);font-weight:400">· 平台期</span></h4><div class="pmeta">合计 <b style="color:var(--ink)">$58,100</b> · 40 单</div><table class="mini-table"><thead><tr><th>来源渠道</th><th>类型</th><th>单数</th><th>金额</th><th>占比</th></tr></thead><tbody><tr><td>Meta ads</td><td><span class="tag Custom">Custom</span></td><td>10</td><td><b>$13,611</b></td><td class="pct">23.4%</td></tr><tr><td>Kickstarter Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>5</td><td><b>$7,014</b></td><td class="pct">12.1%</td></tr><tr><td>Web</td><td><span class="tag Custom">Custom</span></td><td>5</td><td><b>$6,213</b></td><td class="pct">10.7%</td></tr><tr><td>Direct Traffic - No Referrer Information</td><td><span class="tag External">External</span></td><td>4</td><td><b>$6,086</b></td><td class="pct">10.5%</td></tr><tr><td>Kickstarter Discovery - No Referral Code</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$4,760</b></td><td class="pct">8.2%</td></tr><tr><td>Profile - Saved Projects</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$3,810</b></td><td class="pct">6.6%</td></tr><tr><td>Recommended - Thanks Page</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$3,087</b></td><td class="pct">5.3%</td></tr><tr><td>Homepage - Recommended For You</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$2,324</b></td><td class="pct">4.0%</td></tr></tbody></table></div><div class="period-panel latest"><h4>11/10-11/16<span class="badge-new">NEW</span> <span style="color:var(--sub);font-weight:400">· 最新一周</span></h4><div class="pmeta">合计 <b style="color:var(--ink)">$61,209</b> · 44 单</div><table class="mini-table"><thead><tr><th>来源渠道</th><th>类型</th><th>单数</th><th>金额</th><th>占比</th></tr></thead><tbody><tr><td>Meta ads</td><td><span class="tag Custom">Custom</span></td><td>10</td><td><b>$14,420</b></td><td class="pct">23.6%</td></tr><tr><td>Web</td><td><span class="tag Custom">Custom</span></td><td>5</td><td><b>$6,288</b></td><td class="pct">10.3%</td></tr><tr><td>EDM</td><td><span class="tag Custom">Custom</span></td><td>3</td><td><b>$4,306</b></td><td class="pct">7.0%</td></tr><tr><td>App - Recommended - Home</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$3,880</b></td><td class="pct">6.3%</td></tr><tr><td>Google ads</td><td><span class="tag Custom">Custom</span></td><td>2</td><td><b>$3,523</b></td><td class="pct">5.8%</td></tr><tr><td>Direct Traffic - No Referrer Information</td><td><span class="tag External">External</span></td><td>3</td><td><b>$3,523</b></td><td class="pct">5.8%</td></tr><tr><td>Recommended - Thanks Page</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>1</td><td><b>$2,782</b></td><td class="pct">4.5%</td></tr><tr><td>Kickstarter Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$2,351</b></td><td class="pct">3.8%</td></tr></tbody></table></div></div>
+  <div class="period-grid"><div class="period-panel latest"><h4 class="pp-head"><span class="fold-chev">▼</span>11/10-11/16<span class="badge-new">NEW</span> <span style="color:var(--sub);font-weight:400">· 最新一周</span><span class="pmeta" style="margin-left:auto;margin-bottom:0">$61,209 · 44 单</span></h4><div class="pp-body"><table class="mini-table"><thead><tr><th>来源渠道</th><th>类型</th><th>单数</th><th>金额</th><th>占比</th></tr></thead><tbody><tr><td>Meta ads</td><td><span class="tag Custom">Custom</span></td><td>10</td><td><b>$14,420</b></td><td class="pct">23.6%</td></tr><tr><td>Web</td><td><span class="tag Custom">Custom</span></td><td>5</td><td><b>$6,288</b></td><td class="pct">10.3%</td></tr><tr><td>EDM</td><td><span class="tag Custom">Custom</span></td><td>3</td><td><b>$4,306</b></td><td class="pct">7.0%</td></tr><tr><td>App - Recommended - Home</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$3,880</b></td><td class="pct">6.3%</td></tr><tr><td>Google ads</td><td><span class="tag Custom">Custom</span></td><td>2</td><td><b>$3,523</b></td><td class="pct">5.8%</td></tr><tr><td>Direct Traffic - No Referrer Information</td><td><span class="tag External">External</span></td><td>3</td><td><b>$3,523</b></td><td class="pct">5.8%</td></tr><tr><td>Recommended - Thanks Page</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>1</td><td><b>$2,782</b></td><td class="pct">4.5%</td></tr><tr><td>Kickstarter Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$2,351</b></td><td class="pct">3.8%</td></tr></tbody></table></div></div><div class="period-panel collapsed"><h4 class="pp-head"><span class="fold-chev">▼</span>11/3-11/9 <span style="color:var(--sub);font-weight:400">· 平台期</span><span class="pmeta" style="margin-left:auto;margin-bottom:0">$58,100 · 40 单</span></h4><div class="pp-body"><table class="mini-table"><thead><tr><th>来源渠道</th><th>类型</th><th>单数</th><th>金额</th><th>占比</th></tr></thead><tbody><tr><td>Meta ads</td><td><span class="tag Custom">Custom</span></td><td>10</td><td><b>$13,611</b></td><td class="pct">23.4%</td></tr><tr><td>Kickstarter Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>5</td><td><b>$7,014</b></td><td class="pct">12.1%</td></tr><tr><td>Web</td><td><span class="tag Custom">Custom</span></td><td>5</td><td><b>$6,213</b></td><td class="pct">10.7%</td></tr><tr><td>Direct Traffic - No Referrer Information</td><td><span class="tag External">External</span></td><td>4</td><td><b>$6,086</b></td><td class="pct">10.5%</td></tr><tr><td>Kickstarter Discovery - No Referral Code</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$4,760</b></td><td class="pct">8.2%</td></tr><tr><td>Profile - Saved Projects</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$3,810</b></td><td class="pct">6.6%</td></tr><tr><td>Recommended - Thanks Page</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$3,087</b></td><td class="pct">5.3%</td></tr><tr><td>Homepage - Recommended For You</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$2,324</b></td><td class="pct">4.0%</td></tr></tbody></table></div></div><div class="period-panel collapsed"><h4 class="pp-head"><span class="fold-chev">▼</span>10/28-11/2 <span style="color:var(--sub);font-weight:400">· 衰减期</span><span class="pmeta" style="margin-left:auto;margin-bottom:0">$81,706 · 57 单</span></h4><div class="pp-body"><table class="mini-table"><thead><tr><th>来源渠道</th><th>类型</th><th>单数</th><th>金额</th><th>占比</th></tr></thead><tbody><tr><td>Meta ads</td><td><span class="tag Custom">Custom</span></td><td>14</td><td><b>$20,762</b></td><td class="pct">25.4%</td></tr><tr><td>Web</td><td><span class="tag Custom">Custom</span></td><td>6</td><td><b>$8,566</b></td><td class="pct">10.5%</td></tr><tr><td>App - Recommended - Home</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$5,477</b></td><td class="pct">6.7%</td></tr><tr><td>Profile - Saved Projects</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$4,688</b></td><td class="pct">5.7%</td></tr><tr><td>Discovery Landing Page</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$4,047</b></td><td class="pct">5.0%</td></tr><tr><td>Kickstarter Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$3,634</b></td><td class="pct">4.4%</td></tr><tr><td>Kickstarter Discovery - No Referral Code</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>3</td><td><b>$3,230</b></td><td class="pct">4.0%</td></tr><tr><td>App - Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>2</td><td><b>$3,014</b></td><td class="pct">3.7%</td></tr></tbody></table></div></div><div class="period-panel collapsed"><h4 class="pp-head"><span class="fold-chev">▼</span>10/22-10/27 <span style="color:var(--sub);font-weight:400">· 首发期</span><span class="pmeta" style="margin-left:auto;margin-bottom:0">$449,850 · 317 单</span></h4><div class="pp-body"><table class="mini-table"><thead><tr><th>来源渠道</th><th>类型</th><th>单数</th><th>金额</th><th>占比</th></tr></thead><tbody><tr><td>VIP Deposit</td><td><span class="tag Custom">Custom</span></td><td>50</td><td><b>$74,835</b></td><td class="pct">16.6%</td></tr><tr><td>Email - Automated - Project Launched - Followers</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>42</td><td><b>$56,339</b></td><td class="pct">12.5%</td></tr><tr><td>Meta ads</td><td><span class="tag Custom">Custom</span></td><td>35</td><td><b>$49,365</b></td><td class="pct">11.0%</td></tr><tr><td>App - Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>33</td><td><b>$45,769</b></td><td class="pct">10.2%</td></tr><tr><td>Direct Traffic - No Referrer Information</td><td><span class="tag External">External</span></td><td>30</td><td><b>$43,636</b></td><td class="pct">9.7%</td></tr><tr><td>Kickstarter Search</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>16</td><td><b>$24,292</b></td><td class="pct">5.4%</td></tr><tr><td>Web</td><td><span class="tag Custom">Custom</span></td><td>13</td><td><b>$20,960</b></td><td class="pct">4.7%</td></tr><tr><td>Push</td><td><span class="tag Kickstarter">Kickstarter</span></td><td>10</td><td><b>$14,071</b></td><td class="pct">3.1%</td></tr></tbody></table></div></div></div>
 </div>
 
 <div class="card" style="margin-bottom:var(--gap)">
@@ -185,12 +190,7 @@ footer{font-size:12px;color:var(--sub);padding:8px 4px 24px;line-height:1.7}
   <div class="canvas-box tall"><canvas id="refChart"></canvas></div>
 </div>
 
-<section class="grid cols-2" style="margin-bottom:var(--gap)">
-  <div class="card">
-    <h3>增长节奏：典型的 Kickstarter 曲线</h3>
-    <div class="hint">首日爆发 → 快速衰减 → 平台期</div>
-    <div class="canvas-box short"><canvas id="phaseChart"></canvas></div>
-  </div>
+<section class="grid" style="margin-bottom:var(--gap)">
   <div class="card">
     <h3>每日客单价波动</h3>
     <div class="hint">当日金额 ÷ 当日人数，反映大额档位成交节奏</div>
@@ -246,6 +246,11 @@ function foldAll(collapse){
 // 洞察按周期折叠
 document.querySelectorAll('.period-label').forEach(lab=>{
   lab.addEventListener('click', ()=>lab.closest('.period-group').classList.toggle('collapsed'));
+});
+
+// 订单来源分周期面板折叠
+document.querySelectorAll('.period-panel .pp-head').forEach(h=>{
+  h.addEventListener('click', ()=>h.closest('.period-panel').classList.toggle('collapsed'));
 });
 
 // KPIs
@@ -394,17 +399,29 @@ new Chart(document.getElementById('refChart'), {
       y:{stacked:true,grid:{display:false},ticks:{font:{size:10.5}}}}}
 });
 
-// phase chart: 3-day buckets
-const buckets=[];
-for(let i=0;i<fullDays.length;i+=3){const g=fullDays.slice(i,i+3);buckets.push({lab:fullDays[i].date.slice(5)+'~'+(g[g.length-1].date.slice(5)),usd:g.reduce((s,x)=>s+x.usd,0)});}
-new Chart(document.getElementById('phaseChart'), {
+// weekly chart: 每周金额柱状 + 订单数折线
+const WEEK_DEF = [
+  {lab:'第一周', s:'2026-10-22', e:'2026-10-28'},
+  {lab:'第二周', s:'2026-10-29', e:'2026-11-05'},
+  {lab:'第三周', s:'2026-11-06', e:'2026-11-12'},
+  {lab:'第四周（进行中）', s:'2026-11-13', e:'2026-11-19'}
+];
+const wkUsd = WEEK_DEF.map(w=>D.daily.filter(x=>x.date>=w.s&&x.date<=w.e).reduce((s,x)=>s+x.usd,0));
+const wkP = WEEK_DEF.map(w=>D.daily.filter(x=>x.date>=w.s&&x.date<=w.e).reduce((s,x)=>s+x.pledges,0));
+new Chart(document.getElementById('weeklyChart'), {
   type:'bar',
-  data:{labels:buckets.map(b=>b.lab), datasets:[{label:'每 3 天合计（USD）', data:buckets.map(b=>b.usd),
-    backgroundColor:buckets.map((b,i)=>i<2?'#4C72B0':i<4?'#7FA3D6':'#C3D2EA'), borderRadius:4}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
-    tooltip:{callbacks:{label:c=>' '+fmt$(c.parsed.y)}}},
-    scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
-      y:{beginAtZero:true,grid:{color:'#eef0f5'},ticks:{callback:v=>fmt$(v),font:{size:10}}}}}
+  data:{labels:WEEK_DEF.map(w=>w.lab), datasets:[
+    {label:'周金额（USD）', data:wkUsd,
+     backgroundColor:WEEK_DEF.map((w,i)=>i===WEEK_DEF.length-1?'#0bbf7f':'#4C72B0'), borderRadius:6, maxBarThickness:90},
+    {label:'订单数（右轴）', type:'line', data:wkP, borderColor:'#DD8452', backgroundColor:'transparent',
+     borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#DD8452', yAxisID:'y1', tension:.3}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,padding:14,font:{size:11.5}}},
+      tooltip:{callbacks:{label:c=>c.dataset.yAxisID==='y1'?' 订单数: '+c.parsed.y+' 单':' 周金额: '+fmt$(c.parsed.y)}}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:11}}},
+      y:{beginAtZero:true,grid:{color:'#eef0f5'},ticks:{callback:v=>fmt$(v),font:{size:10.5}}},
+      y1:{position:'right',beginAtZero:true,grid:{display:false},ticks:{font:{size:10.5}}}}}
 });
 
 // AOV per day
